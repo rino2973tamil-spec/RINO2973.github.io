@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rino — Minecraft developer</title>
+<link target="_blank" rel="noopener" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f5fb;--ink:#0b1030;--muted:#4a5075;--line:#d3d7ea;--accent:#5b3df5;--on:#fff;--hot:#ff4d7a;--card:rgba(255,255,255,.88);--orb:.2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#080b1e;--ink:#eef0ff;--muted:#98a0c8;--line:#232a52;--accent:#8a6bff;--on:#0b0b1a;--hot:#ff5a7a;--card:rgba(20,26,62,.82);--orb:.35}}
+:root[data-theme="dark"]{--bg:#080b1e;--ink:#eef0ff;--muted:#98a0c8;--line:#232a52;--accent:#8a6bff;--on:#0b0b1a;--hot:#ff5a7a;--card:rgba(20,26,62,.82);--orb:.35}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.65 'Manrope',system-ui,sans-serif;overflow-x:clip}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.orb{position:fixed;width:46rem;max-width:120vw;aspect-ratio:1;border-radius:50%;opacity:var(--orb);pointer-events:none;z-index:0}
+.o1{background:radial-gradient(closest-side,var(--accent),transparent);top:-18rem;right:-18rem}.o2{background:radial-gradient(closest-side,var(--hot),transparent);bottom:-18rem;left:-18rem}
+#bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:40;background:linear-gradient(90deg,var(--hot),var(--accent));transform:scaleX(0);transform-origin:left}
+main{position:relative;z-index:1;max-width:62rem;margin:0 auto;padding:0 1.25rem}
+.hero{min-height:min(46rem,100svh);display:flex;flex-direction:column;justify-content:center;padding:3rem 0}
+.name{font:800 clamp(5rem,26vw,14rem)/.9 'Unbounded',system-ui,sans-serif;letter-spacing:-.05em;margin:0 0 1.5rem;color:transparent;background:linear-gradient(100deg,var(--ink) 30%,var(--hot) 45%,var(--accent) 55%,var(--ink) 70%) 100% 0/250% 100%;-webkit-background-clip:text;background-clip:text;animation:sweep 3s ease-in-out .6s 1 forwards}
+@keyframes sweep{to{background-position:0 0}}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){.name{color:var(--ink);background:none}}
+.lede{font-size:clamp(1.25rem,3.5vw,1.7rem);font-weight:500;max-width:36rem;margin:0 0 .75rem;min-height:3.3em}
+.role{color:var(--accent);font-weight:700}
+.caret{display:inline-block;width:2px;height:1.1em;background:var(--accent);margin-left:3px;vertical-align:-.15em;animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+.sub{color:var(--muted);max-width:34rem;margin:0 0 1.75rem}
+.btns{display:flex;gap:.75rem;flex-wrap:wrap}
+.btn{display:inline-block;padding:.8rem 1.4rem;font:700 1rem 'Manrope',system-ui,sans-serif;text-decoration:none;border:0;cursor:pointer;border-radius:999px;background:var(--accent);color:var(--on)}
+.btn.alt{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 2px var(--line)}
+a:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.stats{display:flex;flex-wrap:wrap;gap:1.25rem 2.5rem;margin-top:2.5rem}
+.stats div{border-left:2px solid var(--accent);padding-left:.9rem}
+.stats b{display:block;font:800 1.4rem/1.2 'Unbounded',system-ui,sans-serif;letter-spacing:-.03em}
+.stats span{color:var(--muted);font-size:.9rem}
+section{padding:3.5rem 0}
+h2{font:600 clamp(1.4rem,4vw,2rem)/1.2 'Unbounded',system-ui,sans-serif;letter-spacing:-.02em;margin:0 0 2rem}
+.mq{overflow:hidden;width:100vw;margin-left:calc(50% - 50vw);border-block:1px solid var(--line);padding:.5rem 0}
+.lane{display:flex;width:max-content;animation:mqs 32s linear infinite}
+.lane.rev{animation-direction:reverse;animation-duration:40s}
+.mq:hover .lane{animation-play-state:paused}
+.lane span{font:800 clamp(2rem,8vw,4.5rem)/1.2 'Unbounded',system-ui,sans-serif;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1.5px var(--ink);white-space:nowrap;padding-right:2.5rem}
+.lane.rev span{color:var(--ink);-webkit-text-stroke:0}
+.lane span::after{content:"\2726";color:var(--accent);-webkit-text-stroke:0;margin-left:2.5rem;font-size:.5em;vertical-align:.25em}
+@keyframes mqs{to{transform:translateX(-50%)}}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:1rem}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:1rem}
+.b1,.b4{grid-column:span 4}.b2,.b3{grid-column:span 2}.b5{grid-column:span 6}
+.card{position:relative;overflow:hidden;display:block;padding:1.5rem;border-radius:20px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);color:inherit;text-decoration:none;transition:transform .15s}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(16rem circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--accent) 38%,transparent),transparent 65%);opacity:0;transition:opacity .25s;pointer-events:none}
+.card:hover::before{opacity:1}
+.card>*{position:relative}
+.card h3{margin:0 0 .4rem;font-size:1.2rem}
+.b1 h3,.b4 h3{font:600 1.5rem/1.2 'Unbounded',system-ui,sans-serif;letter-spacing:-.03em}
+.card p{margin:0;color:var(--muted)}
+.chip{display:inline-block;margin-bottom:.8rem;font-size:.8rem;font-weight:700;padding:.1rem .7rem;border-radius:999px;box-shadow:inset 0 0 0 1px var(--accent);color:var(--accent)}
+.contact{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-bottom:7rem}
+.contact h2{font-size:clamp(2rem,9vw,4rem);margin-bottom:1rem}
+.row{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:1.25rem 0;border-top:1px solid var(--line)}
+.row small{display:block;color:var(--muted)}
+.row b{font:600 clamp(1.1rem,4.5vw,1.6rem)/1.3 'Unbounded',system-ui,sans-serif;letter-spacing:-.03em;overflow-wrap:anywhere}
+.acts{display:flex;gap:.6rem;flex-wrap:wrap}
+.dock{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + .75rem);transform:translateX(-50%);z-index:30;display:flex;gap:.2rem;padding:.35rem;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line),0 10px 30px rgba(0,0,0,.25)}
+.dock a{padding:.55rem .9rem;border-radius:999px;color:var(--ink);text-decoration:none;font-weight:700;font-size:.9rem}
+.dock a.on{background:var(--accent);color:var(--on)}
+.dock a,.btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.dock a:active,.btn:active{transform:scale(.95)}
+footer{position:relative;z-index:1;text-align:center;color:var(--muted);padding:0 1rem 6rem}
+@media (max-width:42rem){.bento{grid-template-columns:1fr}.bento>*{grid-column:auto}}
+@media (max-width:26rem){.dock a{padding:.5rem .6rem;font-size:.8rem}}
+#intro{position:fixed;inset:0;z-index:50;cursor:pointer;animation:gone .01s 2.45s forwards}
+#intro::before,#intro::after{content:"";position:absolute;left:0;right:0;height:50.5%;background-color:#080b1e;background-image:linear-gradient(rgba(138,107,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(138,107,255,.1) 1px,transparent 1px);background-size:36px 36px;animation:.7s cubic-bezier(.7,0,.2,1) 1.75s forwards}
+#intro::before{top:0;animation-name:up}#intro::after{bottom:0;animation-name:down}
+.in{position:absolute;inset:0;z-index:1;display:grid;place-content:center;justify-items:center;gap:1rem;color:#eef0ff;animation:fade .25s 1.5s forwards}
+.nm{overflow:hidden;font:800 clamp(2.4rem,12vw,4.5rem)/1.15 'Unbounded',system-ui,sans-serif;letter-spacing:-.04em;animation:glitch 1.5s steps(1) .5s}
+.nm span{display:inline-block;transform:translateY(110%);animation:rise .6s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(.1s + var(--i)*.08s)}
+.ring{position:relative;width:9rem;height:9rem;display:grid;place-items:center}
+.ring::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(transparent 0 35%,#ff5a7a,#8a6bff);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));filter:drop-shadow(0 0 10px #8a6bff);animation:spin 1s linear infinite}
+.ct{font:800 2rem 'Unbounded',system-ui,sans-serif;letter-spacing:-.04em;color:#eef0ff;font-variant-numeric:tabular-nums}
+.st{margin:0;font:500 .95rem 'Manrope',system-ui,sans-serif;color:#98a0c8;min-height:1.5em}
+.cut{position:absolute;z-index:2;left:0;right:0;top:calc(50% - 1px);height:2px;transform:scaleX(0);background:linear-gradient(90deg,transparent,#ff5a7a,#8a6bff,transparent);box-shadow:0 0 22px #8a6bff;animation:grow 1.5s cubic-bezier(.6,0,.2,1) forwards,fade .2s 1.75s forwards}
+@keyframes spin{to{transform:rotate(1turn)}}@keyframes grow{to{transform:scaleX(1)}}@keyframes glitch{0%,100%{text-shadow:none}15%{text-shadow:4px 0 #ff5a7a,-4px 0 #5ce1ff}30%{text-shadow:none}55%{text-shadow:-3px 0 #ff5a7a,3px 0 #5ce1ff}70%{text-shadow:none}}
+@keyframes rise{to{transform:none}}@keyframes fade{to{opacity:0}}@keyframes up{to{transform:translateY(-101%)}}@keyframes down{to{transform:translateY(101%)}}@keyframes gone{to{visibility:hidden}}
+#intro.skip{opacity:0;transition:opacity .25s;animation:gone .01s .25s forwards}
+@media (prefers-reduced-motion:reduce){#intro{display:none}.lane,.caret,.name{animation:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div><canvas id="fx" aria-hidden="true"></canvas><div id="bar"></div>
+<div id="intro" aria-hidden="true"><div class="cut"></div><div class="in"><div class="ring"><div class="ct"><span id="pct">0</span>%</div></div><div class="nm"><span style="--i:0">R</span><span style="--i:1">i</span><span style="--i:2">n</span><span style="--i:3">o</span></div><p class="st" id="st">Compiling add-ons</p></div></div>
+<nav class="dock" aria-label="Sections"><a class="on" href="#top">Home</a><a href="#servers">Servers</a><a href="#work">Work</a><a href="#skills">Skills</a><a href="#contact">Contact</a></nav>
+<main>
+<header class="hero" id="top">
+<h1 class="name">Rino</h1>
+<p class="lede">Minecraft developer who builds <span class="role" id="role">custom add-ons</span><i class="caret"></i></p>
+<p class="sub">Four add-ons published, with work on Fury Craft, Thunder SMP, Kumarikandam SMP, Yamalogam SMP, and more.</p>
+<div class="btns"><a class="btn" href="#work">See my work</a><a class="btn alt" href="#contact">Contact me</a></div>
+<div class="stats"><div><b>4</b><span>add-ons published</span></div><div><b>4+</b><span>servers worked on</span></div><div><b>Java + Bedrock</b><span>crossplay on one server</span></div></div>
+</header>
+
+<section id="servers">
+<h2>Servers I’ve worked on</h2>
+<div class="mq"><div class="lane"><span>Fury Craft</span><span>Thunder SMP</span><span>Kumarikandam SMP</span><span>Yamalogam SMP</span><span>And more</span><span aria-hidden="true">Fury Craft</span><span aria-hidden="true">Thunder SMP</span><span aria-hidden="true">Kumarikandam SMP</span><span aria-hidden="true">Yamalogam SMP</span><span aria-hidden="true">And more</span></div><div class="lane rev"><span>And more</span><span>Yamalogam SMP</span><span>Kumarikandam SMP</span><span>Thunder SMP</span><span>Fury Craft</span><span aria-hidden="true">And more</span><span aria-hidden="true">Yamalogam SMP</span><span aria-hidden="true">Kumarikandam SMP</span><span aria-hidden="true">Thunder SMP</span><span aria-hidden="true">Fury Craft</span></div></div>
+</section>
+
+<section id="work">
+<h2>Add-ons</h2>
+<div class="grid">
+<a class="card tilt" target="_blank" rel="noopener" href="https://www.curseforge.com/minecraft-bedrock/addons/one-block-survival"><span class="chip">Survival</span><h3>One Block Survival</h3><p>Break one block, survive, and climb 11 phases from Plains to the End.</p></a>
+<a class="card tilt" target="_blank" rel="noopener" href="https://www.curseforge.com/minecraft-bedrock/addons/lumberjacks-friend"><span class="chip">Utility</span><h3>Lumberjack’s Friend</h3><p>Cut a whole tree with one axe swing, and leaves vanish fast. Crouch to break a single log.</p></a>
+<a class="card tilt" target="_blank" rel="noopener" href="https://www.curseforge.com/minecraft-bedrock/addons/speedrun-challenge"><span class="chip">Miscellaneous</span><h3>Speedrun Challenge</h3><p>Race to find a random item. Type /sr to start a speedrun.</p></a>
+<a class="card tilt" target="_blank" rel="noopener" href="https://www.curseforge.com/minecraft-bedrock/addons/farmers-friend"><span class="chip">Utility</span><h3>Farmer’s Friend</h3><p>Auto-replants crops, and crouching grows them in a 3×3 area.</p></a>
+</div>
+</section>
+
+<section id="skills">
+<h2>What I can build</h2>
+<div class="bento">
+<div class="card b1"><h3>Custom add-ons</h3><p>Behavior packs and resource packs for Minecraft Bedrock Edition.</p></div>
+<div class="card b2"><h3>Custom Paper plugins</h3><p>Plugins for Paper servers on Minecraft Java.</p></div>
+<div class="card b3"><h3>Java and Bedrock crossplay</h3><p>One server that both Java and Bedrock players can join.</p></div>
+<div class="card b4"><h3>Custom bosses and armor</h3><p>Boss fights and armor sets built for Paper servers.</p></div>
+<div class="card b5"><h3>And more</h3><p>Other Minecraft server and add-on work.</p></div>
+</div>
+</section>
+
+<section id="contact" class="contact">
+<h2>Let’s build something.</h2>
+<p class="sub">Add-ons, Paper plugins, or server work. Use whichever is easiest.</p>
+<div class="row"><div><small>Email</small><b>rino297399@gmail.com</b></div><div class="acts"><a class="btn" href="mailto:rino297399@gmail.com?subject=Hello%20Rino">Send email</a><button class="btn alt copy" type="button" data-v="rino297399@gmail.com">Copy email</button></div></div>
+<div class="row"><div><small>Discord (display name Rino)</small><b>smk_ff</b></div><div class="acts"><button class="btn alt copy" type="button" data-v="smk_ff">Copy username</button></div></div>
+<div class="row"><div><small>All my projects</small><b>CurseForge</b></div><div class="acts"><a class="btn alt" target="_blank" rel="noopener" href="https://www.curseforge.com/members/rino2973/projects">Open profile</a></div></div>
+</section>
+</main>
+<footer><p>Made by Rino.</p></footer>
+
+<script>setTimeout(function(){var i=document.getElementById('intro');if(i)i.style.display='none'},3600)</script>
+<script>
+(function(){
+var still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var links=[].slice.call(document.querySelectorAll('.dock a'));
+function mark(id){links.forEach(function(l){l.classList.toggle('on',l.getAttribute('href')==='#'+id)})}
+function go(t){var y=t.id==='top'?0:Math.max(0,Math.round(t.getBoundingClientRect().top+(window.pageYOffset||0)));var before=window.pageYOffset||0;
+try{window.scrollTo({top:y,behavior:still?'auto':'smooth'})}catch(e){window.scrollTo(0,y)}
+setTimeout(function(){if(Math.abs((window.pageYOffset||0)-before)<2&&Math.abs(y-before)>4){try{t.scrollIntoView()}catch(e){window.scrollTo(0,y)}}},400)}
+document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();mark(t.id);go(t)}})});
+var busy=false;
+addEventListener('scroll',function(){if(busy)return;busy=true;requestAnimationFrame(function(){busy=false;var best='top';['servers','work','skills','contact'].forEach(function(id){var el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=Math.min(160,innerHeight*.25))best=id});mark(innerHeight+(window.pageYOffset||0)>=document.documentElement.scrollHeight-4?'contact':best)})},{passive:true});
+function legacy(v){var t=document.createElement('textarea');t.value=v;t.setAttribute('readonly','');t.style.position='fixed';t.style.top='0';t.style.opacity='0';document.body.appendChild(t);t.select();t.setSelectionRange(0,v.length);var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(t);return ok}
+document.querySelectorAll('.copy').forEach(function(b){var o=b.textContent;
+function say(s){b.textContent=s;setTimeout(function(){b.textContent=o},1800)}
+b.addEventListener('click',function(){var v=b.dataset.v;
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(v).then(function(){say('Copied')},function(){say(legacy(v)?'Copied':'Select the text above')})}
+else say(legacy(v)?'Copied':'Select the text above')})});
+})();
+</script>
+<script>
+(function(){
+var intro=document.getElementById('intro'),pct=document.getElementById('pct');
+intro.addEventListener('click',function(){intro.classList.add('skip')});
+var t0=performance.now();
+var st=document.getElementById('st'),msg=['Compiling add-ons','Starting servers','Linking Java and Bedrock','Ready'];
+(function tick(n){var p=Math.min(1,(n-t0)/1500);pct.textContent=Math.round(p*100);st.textContent=msg[p<.3?0:p<.6?1:p<1?2:3];if(p<1&&!intro.classList.contains('skip'))requestAnimationFrame(tick)})(t0);
+
+})();
+</script>
+<script>
+(function(){
+var still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var R=['custom add-ons','Paper plugins','crossplay servers','custom bosses and armor'],ri=0,ci=R[0].length,del=true,role=document.getElementById('role');
+if(!still)setTimeout(function type(){var w=R[ri],t=del?35:70;ci+=del?-1:1;role.textContent=w.slice(0,ci);
+if(!del&&ci===w.length){del=true;t=1500}else if(del&&ci===0){del=false;ri=(ri+1)%R.length;t=300}setTimeout(type,t)},2900);
+document.querySelectorAll('.card').forEach(function(el){
+el.addEventListener('pointermove',function(e){var r=el.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;el.style.setProperty('--mx',x+'px');el.style.setProperty('--my',y+'px');
+if(el.classList.contains('tilt')&&e.pointerType==='mouse'&&!still)el.style.transform='perspective(700px) rotateX('+((.5-y/r.height)*8)+'deg) rotateY('+((x/r.width-.5)*8)+'deg)'});
+el.addEventListener('pointerleave',function(){el.style.transform=''})});
+var bar=document.getElementById('bar');
+addEventListener('scroll',function(){var d=document.documentElement,m=d.scrollHeight-innerHeight;bar.style.transform='scaleX('+(m>0?scrollY/m:0)+')'},{passive:true});
+})();
+</script>
+<script>
+(function(){
+var still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var c=document.getElementById('fx'),g=c.getContext('2d'),W,H,P=[],m={x:-999,y:-999},col='#8a6bff',k=0;
+function size(){var d=1;W=innerWidth;H=innerHeight;c.width=W*d;c.height=H*d;g.setTransform(d,0,0,d,0,0);
+var n=Math.min(W<700?34:70,Math.floor(W*H/16000));P=[];for(var i=0;i<n;i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4})}
+var lastT=0;
+function frame(ts){ts=ts||0;if(!still&&(document.hidden||ts-lastT<32)){requestAnimationFrame(frame);return}lastT=ts;if(k++%30===0)col=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||col;
+g.clearRect(0,0,W,H);g.fillStyle=col;g.strokeStyle=col;
+for(var i=0;i<P.length;i++){var p=P[i];
+if(!still){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;var dx=m.x-p.x,dy=m.y-p.y;if(dx*dx+dy*dy<22500){p.x+=dx*.012;p.y+=dy*.012}}
+g.globalAlpha=.7;g.fillRect(p.x-1,p.y-1,2.5,2.5);
+for(var j=i+1;j<P.length;j++){var q=P[j],ex=p.x-q.x,ey=p.y-q.y,d2=ex*ex+ey*ey;if(d2<14400){g.globalAlpha=(1-d2/14400)*.4;g.beginPath();g.moveTo(p.x,p.y);g.lineTo(q.x,q.y);g.stroke()}}}
+if(!still)requestAnimationFrame(frame)}
+size();frame();
+addEventListener('resize',function(){size();if(still)frame()});
+addEventListener('pointermove',function(e){m.x=e.clientX;m.y=e.clientY},{passive:true});
+})();
+</script>
+</body>
+</html>
